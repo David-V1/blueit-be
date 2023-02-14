@@ -11,7 +11,7 @@ import lombok.Setter;
 //@RequiredArgsConstructor
 //@NoArgsConstructor
 @Entity
-@Table(name = "community")
+@Table(name = "blueit_community")
 public class Community {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

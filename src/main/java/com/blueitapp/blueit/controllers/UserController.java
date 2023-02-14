@@ -9,7 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/user")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin()
 public class UserController {
     private final UserService service;
     public UserController(UserService userService){
