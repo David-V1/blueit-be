@@ -1,5 +1,6 @@
 package com.blueitapp.blueit.controllers;
 
+import com.blueitapp.blueit.DTO.PostDTO;
 import com.blueitapp.blueit.models.Image;
 import com.blueitapp.blueit.models.Post;
 import com.blueitapp.blueit.services.PostService;
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/post")
@@ -27,10 +29,10 @@ public class PostController {
     // Inside the parameters we specify an array for potential multiple images w/ MultipartFile[].
     // Now we need to prepare this file for processing, so we can save it  to our DB (inside service).
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = {"/create"}, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public void createPost(@RequestPart("post") Post post, @RequestPart("imageFile") MultipartFile[] file){
+    @PostMapping(value = {"/create/{userId}"}, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public void createPost(@PathVariable("userId") UUID userId, @RequestPart("post") PostDTO post, @RequestPart("imageFile") MultipartFile[] file){
         try {
-            service.createPost(post, file);
+            service.createPost(userId, post, file);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED);
         }

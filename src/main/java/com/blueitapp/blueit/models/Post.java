@@ -37,8 +37,9 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "image_id"))
     private Set<Image> postImages;
     // TODO: Since we changed the RelType from JoinTable to ManyToOne, we need to add the Post ID to the Image Table
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-//    private Set<Image> postImages;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private AppUser user;
 
 }
