@@ -1,7 +1,9 @@
 package com.blueitapp.blueit.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -20,16 +22,19 @@ public class AppUser {
     @Lob
     @Column(name = "profile_picture", length = 10000)
     private String profilePicture;
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Post> post;
 
-//    private List<Post> post;
-    public AppUser(UUID id, String username, String password, String email, String profilePicture) {
+    public AppUser(UUID id, String username, String password, String email, String profilePicture, List<Post> post) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
         this.profilePicture = profilePicture;
-
+        this.post = post;
         }
+
     public AppUser() {}
 
     public UUID getId() {
@@ -66,5 +71,13 @@ public class AppUser {
 
     public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
+    }
+
+    public List<Post> getPost() {
+        return post;
+    }
+
+    public void setPost(List<Post> post) {
+        this.post = post;
     }
 }
