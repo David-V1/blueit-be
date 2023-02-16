@@ -36,10 +36,12 @@ public class Post {
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "image_id"))
     private Set<Image> postImages;
-    // TODO: Since we changed the RelType from JoinTable to ManyToOne, we need to add the Post ID to the Image Table
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private AppUser user;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "community_id", referencedColumnName = "id")
+    private Community community;
 
 }

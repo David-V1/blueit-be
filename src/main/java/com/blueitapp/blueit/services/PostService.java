@@ -1,9 +1,12 @@
 package com.blueitapp.blueit.services;
 
+import com.blueitapp.blueit.DTO.CommunityDTO;
 import com.blueitapp.blueit.DTO.PostDTO;
 import com.blueitapp.blueit.models.AppUser;
+import com.blueitapp.blueit.models.Community;
 import com.blueitapp.blueit.models.Image;
 import com.blueitapp.blueit.models.Post;
+import com.blueitapp.blueit.repositories.CommunityRepository;
 import com.blueitapp.blueit.repositories.PostRepository;
 import com.blueitapp.blueit.repositories.UserRepository;
 import org.apache.catalina.User;
@@ -18,9 +21,11 @@ import java.util.*;
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-    public PostService( PostRepository repository, UserRepository userRepository) {
+    private final CommunityRepository communityRepository;
+    public PostService( PostRepository repository, UserRepository userRepository, CommunityRepository communityRepository) {
         this.postRepository = repository;
         this.userRepository = userRepository;
+        this.communityRepository = communityRepository;
     }
 
     //CREATE
@@ -39,12 +44,20 @@ public class PostService {
         return imageModels;
     }
 
-    public void createPost(UUID userId, PostDTO post, MultipartFile[] file) throws Exception {
+    public void createPost(UUID userId, CommunityDTO community, PostDTO post, MultipartFile[] file) throws Exception {
 
         Optional<AppUser> userOptional = userRepository.findById(userId);
         if(userOptional.isEmpty()){
             throw new Exception("User not found");
         }
+
+        String communityName = community.name.toLowerCase();
+        Optional<Community> communityOptional = communityRepository.findByName(communityName);
+        if(communityOptional.isEmpty()){
+            throw new Exception("Community not found");
+        }
+
+        Community community1 = communityOptional.get();
         AppUser user = userOptional.get();
         Post newPost = new Post(); // create new post instance for repository.
         Set<Image> images = uploadImage(file); // process images.
@@ -55,6 +68,7 @@ public class PostService {
         newPost.setContent(post.content);
         newPost.setPostImages(images); //setting our images to our Post-model OneToMany rel w/ Image-Model
         newPost.setUser(user);
+        newPost.setCommunity(community1);
         postRepository.save(newPost);
     }
 
