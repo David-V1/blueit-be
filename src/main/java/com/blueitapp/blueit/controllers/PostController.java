@@ -1,5 +1,6 @@
 package com.blueitapp.blueit.controllers;
 
+import com.blueitapp.blueit.DTO.CommunityDTO;
 import com.blueitapp.blueit.DTO.PostDTO;
 import com.blueitapp.blueit.models.Image;
 import com.blueitapp.blueit.models.Post;
@@ -29,10 +30,14 @@ public class PostController {
     // Inside the parameters we specify an array for potential multiple images w/ MultipartFile[].
     // Now we need to prepare this file for processing, so we can save it  to our DB (inside service).
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = {"/create/{userId}"}, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public void createPost(@PathVariable("userId") UUID userId, @RequestPart("post") PostDTO post, @RequestPart("imageFile") MultipartFile[] file){
+    @PostMapping(value = {"/create/{userId}/{community}"}, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public void createPost(
+            @PathVariable("userId") UUID userId,
+            @PathVariable("community") CommunityDTO community,
+            @RequestPart("post") PostDTO post,
+            @RequestPart("imageFile") MultipartFile[] file){
         try {
-            service.createPost(userId, post, file);
+            service.createPost(userId, community, post, file);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED);
         }

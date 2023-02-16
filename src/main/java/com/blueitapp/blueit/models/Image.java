@@ -16,7 +16,6 @@ public class Image  {
     @Column(name = "picByte", length = 5000000)
     private byte[] picByte;
 
-    //TODO: Need to Manually add the Post ID to the Image Table inside service
 //    @ManyToOne(optional = false)
 //    @JoinColumn(name = "post_id", referencedColumnName = "post_id")
 //    private Post post;

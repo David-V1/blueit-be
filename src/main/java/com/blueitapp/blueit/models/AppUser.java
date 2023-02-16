@@ -23,8 +23,9 @@ public class AppUser {
     @Column(name = "profile_picture", length = 10000)
     private String profilePicture;
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> post;
+
 
     public AppUser(UUID id, String username, String password, String email, String profilePicture, List<Post> post) {
         this.id = id;
@@ -33,9 +34,11 @@ public class AppUser {
         this.email = email;
         this.profilePicture = profilePicture;
         this.post = post;
-        }
 
-    public AppUser() {}
+    }
+
+    public AppUser() {
+    }
 
     public UUID getId() {
         return id;
@@ -79,5 +82,9 @@ public class AppUser {
 
     public void setPost(List<Post> post) {
         this.post = post;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 }
