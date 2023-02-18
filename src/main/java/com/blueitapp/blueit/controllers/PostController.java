@@ -30,10 +30,10 @@ public class PostController {
     // Inside the parameters we specify an array for potential multiple images w/ MultipartFile[].
     // Now we need to prepare this file for processing, so we can save it  to our DB (inside service).
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = {"/create/{userId}/{community}"}, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = {"/create/{userId}/b/{community}"}, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public void createPost(
             @PathVariable("userId") UUID userId,
-            @PathVariable("community") CommunityDTO community,
+            @PathVariable("community") String community,
             @RequestPart("post") PostDTO post,
             @RequestPart("imageFile") MultipartFile[] file){
         try {

@@ -37,7 +37,7 @@ public class CommunityController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{id}")
+    @GetMapping("/comId/{id}")
     public Community getCommunityById(@PathVariable Long id){
         try {
             return service.getCommunityById(id);
