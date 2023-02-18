@@ -44,7 +44,7 @@ public class CommunityService {
 
     }
 
-    // Read
+    // Read //TODO: Get a Community by name
     public Iterable<Community> getAllCommunities(){
         return communityRepository.findAll();
     }
@@ -55,7 +55,7 @@ public class CommunityService {
             throw new Exception("Community not found");
         }
 
-        return communityRepository.findById(id).get();
+        return communityOptional.get();
     }
 
     public Community getCommunityByName(String name) throws Exception{
@@ -64,7 +64,7 @@ public class CommunityService {
             throw new Exception("Community not found");
         }
 
-        return communityRepository.findByName(name).get();
+        return communityOptional.get();
     }
 
     // Update

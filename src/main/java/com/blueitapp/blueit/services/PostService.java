@@ -44,14 +44,14 @@ public class PostService {
         return imageModels;
     }
 
-    public void createPost(UUID userId, CommunityDTO community, PostDTO post, MultipartFile[] file) throws Exception {
+    public void createPost(UUID userId, String community, PostDTO post, MultipartFile[] file) throws Exception {
 
         Optional<AppUser> userOptional = userRepository.findById(userId);
         if(userOptional.isEmpty()){
             throw new Exception("User not found");
         }
 
-        String communityName = community.name.toLowerCase();
+        String communityName = community.toLowerCase();
         Optional<Community> communityOptional = communityRepository.findByName(communityName);
         if(communityOptional.isEmpty()){
             throw new Exception("Community not found");
