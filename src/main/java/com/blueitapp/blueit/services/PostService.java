@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class PostService {
@@ -45,17 +47,25 @@ public class PostService {
     }
 
     public void createPost(UUID userId, String community, PostDTO post, MultipartFile[] file) throws Exception {
-
+        // USER checks
         Optional<AppUser> userOptional = userRepository.findById(userId);
         if(userOptional.isEmpty()){
             throw new Exception("User not found");
         }
+        // COMMUNITY checks
+        if (community.equals(""))
+            throw new Exception("Community can't be empty");
 
         String communityName = community.toLowerCase();
         Optional<Community> communityOptional = communityRepository.findByName(communityName);
         if(communityOptional.isEmpty()){
             throw new Exception("Community not found");
         }
+
+        // Date formatter
+        LocalDateTime postDate = LocalDateTime.now();
+        DateTimeFormatter myDateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String newPostDate = postDate.format(myDateFormat);
 
         Community community1 = communityOptional.get();
         AppUser user = userOptional.get();
@@ -64,7 +74,7 @@ public class PostService {
 
         newPost.setTitle(post.title);
         newPost.setLikes(post.likes);
-        newPost.setPostedDate((Date) post.postedDate);
+        newPost.setPostedDate(newPostDate);
         newPost.setContent(post.content);
         newPost.setPostImages(images); //setting our images to our Post-model OneToMany rel w/ Image-Model
         newPost.setUser(user);
@@ -84,9 +94,10 @@ public class PostService {
         throw new Exception("Post not found");
     }
 
-    public Post getPostById(Long id) throws Exception{
+    public Post getPostById(Long id) throws Exception {
         Optional<Post> post = postRepository.findById(id);
-        if(post.isPresent()){
+
+        if(post.isPresent()) {
             return post.get();
         }
         throw new Exception("Post not found");

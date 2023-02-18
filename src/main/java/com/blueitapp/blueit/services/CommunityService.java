@@ -17,15 +17,15 @@ import java.util.UUID;
 public class CommunityService {
 
     private final CommunityRepository communityRepository;
-    private final UserRepository userRepository;
 
-    public CommunityService(CommunityRepository communityRepository, UserRepository userRepository){
+
+    public CommunityService(CommunityRepository communityRepository) {
         this.communityRepository = communityRepository;
-        this.userRepository = userRepository;
+
     }
 
     // Create
-    public void createCommunity(CommunityDTO community) throws Exception{
+    public void createCommunity(CommunityDTO community) throws Exception {
         String communityName = community.name.trim().toLowerCase().replaceAll("\\s", "");
 
         if (communityName.trim().isEmpty()) {
@@ -44,14 +44,14 @@ public class CommunityService {
 
     }
 
-    // Read //TODO: Get a Community by name
+    // Read
     public Iterable<Community> getAllCommunities(){
         return communityRepository.findAll();
     }
 
-    public Community getCommunityById(Long id) throws Exception{
+    public Community getCommunityById(Long id) throws Exception {
         Optional<Community> communityOptional = communityRepository.findById(id);
-        if (communityOptional.isEmpty()){
+        if (communityOptional.isEmpty()) {
             throw new Exception("Community not found");
         }
 

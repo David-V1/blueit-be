@@ -27,7 +27,7 @@ public class Post {
     @Column(name = "likes")
     private Integer likes;
     @Column(name = "date")
-    private Date postedDate;
+    private String postedDate;
     @Column(name = "content", length = 100000)
     private String content;
     //Third Table to manage our Post's Images
