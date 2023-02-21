@@ -7,6 +7,7 @@ import com.blueitapp.blueit.repositories.CommunityRepository;
 import com.blueitapp.blueit.repositories.PostRepository;
 import com.blueitapp.blueit.repositories.PostVotesReporitory;
 import com.blueitapp.blueit.repositories.UserRepository;
+import com.blueitapp.blueit.utils.ImageUtils;
 import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,20 +34,7 @@ public class PostService {
     }
 
     //CREATE
-    // We are going to build our images and store them in a set of images.
-    public Set<Image> uploadImage(MultipartFile[] multipartFiles) throws IOException {
-        Set<Image> imageModels = new HashSet<>();
-        // building Objects of our Image-model to save in Set {}.
-        for (MultipartFile file : multipartFiles) {
-            Image imageModel = new Image(
-                    file.getOriginalFilename(),
-                    file.getContentType(),
-                    file.getBytes()
-            );
-            imageModels.add(imageModel);
-        }
-        return imageModels;
-    }
+
     //TODO: Edge case. Handle if user doesn't upload any images.
     public void createPost(UUID userId, String community, PostDTO post, MultipartFile[] file) throws Exception {
         // USER checks
@@ -72,9 +60,7 @@ public class PostService {
         Community community1 = communityOptional.get();
         AppUser user = userOptional.get();
         Post newPost = new Post(); // create new post instance for repository.
-        Set<Image> images = uploadImage(file); // process images.
-
-
+        Set<Image> images = ImageUtils.uploadImage(file); // process images.
 
         newPost.setTitle(post.title);
         newPost.setPostedDate(newPostDate);
@@ -103,7 +89,6 @@ public class PostService {
             updateVote(postVotesOptional.get(), voteType);
             return;
         }
-
 
         //Creating new vote
         PostVotes newVote = new PostVotes();

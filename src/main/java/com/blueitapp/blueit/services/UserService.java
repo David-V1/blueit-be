@@ -33,6 +33,16 @@ public class UserService {
         repository.save(newUser);
     }
 
+    public void addProfilePicture(String email, String profilePicture) throws Exception {
+        Optional<AppUser> userOptional = repository.findByEmail(email);
+        if(userOptional.isEmpty()){
+            throw new Exception("User not found");
+        }
+        AppUser user = userOptional.get();
+        user.setProfilePicture(profilePicture);
+        repository.save(user);
+    }
+
     //TODO: 1. You can use a hashmap to store the user's UUID and the token then use the token to verify the user's UUID
     //TODO: 2. You can use the repository ID to generate a token and use the token to verify the user's UUID
     //Read
