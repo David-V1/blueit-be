@@ -43,6 +43,17 @@ public class PostController {
         }
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value ="/vote/{userId}/{postId}/{voteType}")
+    public void votePost(@PathVariable UUID userId, @PathVariable Long postId, @PathVariable String voteType){
+        try {
+
+            service.votePost(userId, postId, voteType);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED);
+        }
+    }
+
     //READ
     @ResponseStatus(HttpStatus.OK)
     @GetMapping()
@@ -65,6 +76,16 @@ public class PostController {
     public Post getPostById(@PathVariable Long id){
         try {
             return service.getPostById(id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/likes/{postId}")
+    public Integer getPostLikes(@PathVariable Long postId){
+        try {
+            return service.getPostLikes(postId);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

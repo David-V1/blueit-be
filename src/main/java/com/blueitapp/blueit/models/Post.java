@@ -2,10 +2,7 @@ package com.blueitapp.blueit.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Date;
 import java.util.List;
@@ -15,6 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "post")
 public class Post {
@@ -24,10 +22,10 @@ public class Post {
     private Long id;
     @Column(name = "title", unique = true)
     private String title;
-    @Column(name = "likes")
-    private Integer likes;
     @Column(name = "date")
     private String postedDate;
+    @Column(name = "votes")
+    private Integer votes;
     @Column(name = "content", length = 100000)
     private String content;
     //Third Table to manage our Post's Images
@@ -43,5 +41,9 @@ public class Post {
     @ManyToOne(optional = false)
     @JoinColumn(name = "community_id", referencedColumnName = "id")
     private Community community;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PostVotes> likes;
 
 }

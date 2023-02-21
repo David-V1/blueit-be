@@ -25,6 +25,9 @@ public class AppUser {
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> post;
+    @JsonIgnore
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostVotes> likes;
 
 
     public AppUser(UUID id, String username, String password, String email, String profilePicture, List<Post> post) {

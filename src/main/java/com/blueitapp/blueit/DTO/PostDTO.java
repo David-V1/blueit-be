@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class PostDTO {
-    public Optional<Long> id;
+    public Long id;
     public String title;
     public Integer likes;
     public Date postedDate;
