@@ -99,8 +99,11 @@ public class PostService {
             throw new Exception("Post not found");
         }
         Optional<PostVotes> postVotesOptional = postVotesRepository.findByUserIdAndPostId(userOptional.get(), postOptional.get());
-        if (postVotesOptional.isPresent())
-            throw new Exception("User has already voted on this post");
+        if (postVotesOptional.isPresent()){
+            updateVote(postVotesOptional.get(), voteType);
+            return;
+        }
+
 
         //Creating new vote
         PostVotes newVote = new PostVotes();
@@ -161,6 +164,28 @@ public class PostService {
 //    }
 
     //UPDATE
+    public void updateVote(PostVotes postVotes, String voteType) throws Exception {
+        System.out.println("Updating vote" + "" + postVotes.getPostId());
+        Optional<Post> postOptional = postRepository.findById(postVotes.getPostId().getId());
+        if(postOptional.isEmpty()){
+            throw new Exception("Post not found. Something went wrong updating.");
+        }
+        if (postVotes.getVoteType().equals(voteType)){
+            return;
+        }
+        if (postVotes.getVoteType().equals("true") && voteType.equals("false")){
+            postOptional.get().setVotes(postOptional.get().getVotes() - 1);
+            postRepository.save(postOptional.get());
+
+        } else {
+            postOptional.get().setVotes(postOptional.get().getVotes() + 1);
+            postRepository.save(postOptional.get());
+        }
+
+        postVotes.setVoteType(voteType);
+        postVotesRepository.save(postVotes);
+        }
+
+    }
 
     //DELETE
-}
