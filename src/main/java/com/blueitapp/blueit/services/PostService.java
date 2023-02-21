@@ -2,17 +2,16 @@ package com.blueitapp.blueit.services;
 
 import com.blueitapp.blueit.DTO.CommunityDTO;
 import com.blueitapp.blueit.DTO.PostDTO;
-import com.blueitapp.blueit.models.AppUser;
-import com.blueitapp.blueit.models.Community;
-import com.blueitapp.blueit.models.Image;
-import com.blueitapp.blueit.models.Post;
+import com.blueitapp.blueit.models.*;
 import com.blueitapp.blueit.repositories.CommunityRepository;
 import com.blueitapp.blueit.repositories.PostRepository;
+import com.blueitapp.blueit.repositories.PostVotesReporitory;
 import com.blueitapp.blueit.repositories.UserRepository;
 import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.*;
@@ -24,10 +23,13 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CommunityRepository communityRepository;
-    public PostService( PostRepository repository, UserRepository userRepository, CommunityRepository communityRepository) {
+//    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    private final PostVotesReporitory postVotesRepository;
+    public PostService( PostRepository repository, UserRepository userRepository, CommunityRepository communityRepository, PostVotesReporitory postVotesRepository) {
         this.postRepository = repository;
         this.userRepository = userRepository;
         this.communityRepository = communityRepository;
+        this.postVotesRepository = postVotesRepository;
     }
 
     //CREATE
@@ -45,7 +47,7 @@ public class PostService {
         }
         return imageModels;
     }
-
+    //TODO: Edge case. Handle if user doesn't upload any images.
     public void createPost(UUID userId, String community, PostDTO post, MultipartFile[] file) throws Exception {
         // USER checks
         Optional<AppUser> userOptional = userRepository.findById(userId);
@@ -72,14 +74,52 @@ public class PostService {
         Post newPost = new Post(); // create new post instance for repository.
         Set<Image> images = uploadImage(file); // process images.
 
+
+
         newPost.setTitle(post.title);
-        newPost.setLikes(post.likes);
         newPost.setPostedDate(newPostDate);
         newPost.setContent(post.content);
         newPost.setPostImages(images); //setting our images to our Post-model OneToMany rel w/ Image-Model
         newPost.setUser(user);
         newPost.setCommunity(community1);
+        newPost.setVotes(0);
         postRepository.save(newPost);
+    }
+
+    //TODO: Need to handle down votes as well.
+    public void votePost(UUID userId, Long postId, String voteType) throws Exception {
+
+        //Ensuring there is 1 vote per user per post
+        Optional<AppUser> userOptional = userRepository.findById(userId);
+        if(userOptional.isEmpty()){
+            throw new Exception("User not found");
+        }
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if(postOptional.isEmpty()){
+            throw new Exception("Post not found");
+        }
+        Optional<PostVotes> postVotesOptional = postVotesRepository.findByUserIdAndPostId(userOptional.get(), postOptional.get());
+        if (postVotesOptional.isPresent())
+            throw new Exception("User has already voted on this post");
+
+        //Creating new vote
+        PostVotes newVote = new PostVotes();
+        newVote.setUserId(userOptional.get());
+        newVote.setPostId(postOptional.get());
+        newVote.setVoteType(voteType);
+        newVote.setDateVoted(LocalDateTime.now());
+
+        // Post Vote logic
+        Post post = postOptional.get();
+        if (voteType.equals("true")) {
+            post.setVotes(post.getVotes() + 1);
+            newVote.setVoteType("true");
+        } else {
+            post.setVotes(post.getVotes() - 1);
+            newVote.setVoteType("false");
+        }
+
+        postVotesRepository.save(newVote);
     }
 
     //READ
@@ -102,6 +142,23 @@ public class PostService {
         }
         throw new Exception("Post not found");
     }
+
+    public Integer getPostLikes(Long postId) throws Exception{
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if(postOptional.isEmpty()){
+            throw new Exception("Post not found");
+        }
+        return postOptional.get().getVotes();
+    }
+
+//    public Iterable<Post> getPostsByCommunity(String community) throws Exception {
+//        Optional<Community> communityOptional = communityRepository.findByName(community);
+//        if(communityOptional.isEmpty()){
+//            throw new Exception("Community not found");
+//        }
+//        Community community1 = communityOptional.get();
+//        return postRepository.findByCommunity(community1);
+//    }
 
     //UPDATE
 

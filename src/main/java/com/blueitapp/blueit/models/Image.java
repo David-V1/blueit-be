@@ -16,10 +16,6 @@ public class Image  {
     @Column(name = "picByte", length = 5000000)
     private byte[] picByte;
 
-//    @ManyToOne(optional = false)
-//    @JoinColumn(name = "post_id", referencedColumnName = "post_id")
-//    private Post post;
-
     public Image() {
     }
 
