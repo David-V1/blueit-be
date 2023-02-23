@@ -32,7 +32,7 @@ public class UserService {
         // TODO add relationship
         userRepository.save(newUser);
     }
-
+    //TODO: Compress files
     public void addProfilePicture(UUID userId, MultipartFile file) throws Exception {
         Optional<AppUser> userOptional = userRepository.findById(userId);
         if(userOptional.isEmpty()) {
@@ -55,7 +55,6 @@ public class UserService {
     public AppUser getUserByEmailAndPassword(String email, String password) throws Exception{
         Optional<AppUser> user = userRepository.findByEmailAndPassword(email, password);
         if(user.isPresent()){
-            System.out.println("FROM USER SERVICE!!");
             return user.get();
         }
         throw new Exception("User not found");

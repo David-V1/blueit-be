@@ -36,11 +36,13 @@ public class AppUser {
     private List<PostVotes> likes;
 
 
-    public AppUser(UUID id, String username, String password, String email, byte[] profilePicture, List<Post> post) {
+    public AppUser(UUID id, String username, String password, String email, String imageName, String imgType, byte[] profilePicture, List<Post> post) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
+        this.imageName = imageName;
+        this.imgType = imgType;
         this.profilePicture = profilePicture;
         this.post = post;
     }
