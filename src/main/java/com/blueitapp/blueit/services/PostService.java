@@ -60,7 +60,7 @@ public class PostService {
         Community community1 = communityOptional.get();
         AppUser user = userOptional.get();
         Post newPost = new Post(); // create new post instance for repository.
-        Set<Image> images = ImageUtils.uploadImage(file); // process images.
+        Set<Image> images = ImageUtils.uploadImageArr(file); // process images.
 
         newPost.setTitle(post.title);
         newPost.setPostedDate(newPostDate);

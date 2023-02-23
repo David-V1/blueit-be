@@ -19,9 +19,15 @@ public class AppUser {
     private String password;
     @Column(name = "email", unique = true)
     private String email;
+
+    @Column(name = "image_name")
+    private String imageName;
+    @Column(name = "image_type")
+    private String imgType;
     @Lob
     @Column(name = "profile_picture", length = 10000)
-    private String profilePicture;
+    private byte[] profilePicture;
+
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> post;
@@ -30,18 +36,16 @@ public class AppUser {
     private List<PostVotes> likes;
 
 
-    public AppUser(UUID id, String username, String password, String email, String profilePicture, List<Post> post) {
+    public AppUser(UUID id, String username, String password, String email, byte[] profilePicture, List<Post> post) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
         this.profilePicture = profilePicture;
         this.post = post;
-
     }
 
-    public AppUser() {
-    }
+    public AppUser() { }
 
     public UUID getId() {
         return id;
@@ -71,11 +75,11 @@ public class AppUser {
         this.email = email;
     }
 
-    public String getProfilePicture() {
+    public byte[] getProfilePicture() {
         return profilePicture;
     }
 
-    public void setProfilePicture(String profilePicture) {
+    public void setProfilePicture(byte[] profilePicture) {
         this.profilePicture = profilePicture;
     }
 
@@ -89,5 +93,29 @@ public class AppUser {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getImgType() {
+        return imgType;
+    }
+
+    public void setImgType(String imgType) {
+        this.imgType = imgType;
+    }
+
+    public List<PostVotes> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<PostVotes> likes) {
+        this.likes = likes;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 }

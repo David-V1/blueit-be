@@ -1,6 +1,7 @@
 package com.blueitapp.blueit.models;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 
 @Entity
 @Table(name = "image")

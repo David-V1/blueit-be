@@ -4,8 +4,13 @@ import com.blueitapp.blueit.DTO.UserDTO;
 import com.blueitapp.blueit.models.AppUser;
 import com.blueitapp.blueit.services.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
@@ -27,8 +32,17 @@ public class UserController {
         }
     }
 
-    // Read
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(value = {"/{userId}"}, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public void addProfilePic(@PathVariable UUID userId, @RequestPart("imageFile") MultipartFile file){
+        try {
+            service.addProfilePicture(userId, file);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED);
+        }
+    }
 
+    // Read
     @ResponseStatus(HttpStatus.OK)
     @GetMapping()
     public Iterable<AppUser> getAllUsers(){
@@ -45,7 +59,18 @@ public class UserController {
         }
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/u/id/{userid}")
+    public AppUser getUserById(@PathVariable UUID userid){
+        try {
+            return service.getUserById(userid);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
     // Update
+
 
     // Delete
 }
