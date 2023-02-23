@@ -1,25 +1,25 @@
 package com.blueitapp.blueit.services;
 
-import com.blueitapp.blueit.DTO.UserDTO;
 import com.blueitapp.blueit.models.AppUser;
 import com.blueitapp.blueit.repositories.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
 
-    UserRepository repository;
+    UserRepository userRepository;
     public UserService(UserRepository repository){
-        this.repository = repository;
+        this.userRepository = repository;
     }
     //TODO: Add AUTH to verify user UUID w/ hashMap or get token from repository ID (Extract)
 
-
     //Create
     public void createUser(AppUser user) throws Exception {
-        Optional<AppUser> userOptional = repository.findByEmail(user.getEmail());
+        Optional<AppUser> userOptional = userRepository.findByEmail(user.getEmail());
         if(userOptional.isPresent()){
             throw new Exception("Email already taken");
         }
@@ -30,28 +30,39 @@ public class UserService {
         newUser.setEmail(user.getEmail());
         newUser.setProfilePicture(user.getProfilePicture());
         // TODO add relationship
-        repository.save(newUser);
+        userRepository.save(newUser);
     }
 
-    public void addProfilePicture(String email, String profilePicture) throws Exception {
-        Optional<AppUser> userOptional = repository.findByEmail(email);
-        if(userOptional.isEmpty()){
+    public void addProfilePicture(UUID userId, MultipartFile file) throws Exception {
+        Optional<AppUser> userOptional = userRepository.findById(userId);
+        if(userOptional.isEmpty()) {
             throw new Exception("User not found");
         }
         AppUser user = userOptional.get();
-        user.setProfilePicture(profilePicture);
-        repository.save(user);
+        user.setImageName(file.getOriginalFilename());
+        user.setImgType(file.getContentType());
+        user.setProfilePicture(file.getBytes());
+        userRepository.save(user);
     }
 
     //TODO: 1. You can use a hashmap to store the user's UUID and the token then use the token to verify the user's UUID
     //TODO: 2. You can use the repository ID to generate a token and use the token to verify the user's UUID
     //Read
     public Iterable<AppUser> getAllUsers(){
-        return repository.findAll();
+        return userRepository.findAll();
     }
 
     public AppUser getUserByEmailAndPassword(String email, String password) throws Exception{
-        Optional<AppUser> user = repository.findByEmailAndPassword(email, password);
+        Optional<AppUser> user = userRepository.findByEmailAndPassword(email, password);
+        if(user.isPresent()){
+            System.out.println("FROM USER SERVICE!!");
+            return user.get();
+        }
+        throw new Exception("User not found");
+    }
+
+    public AppUser getUserById(UUID userId) throws Exception{
+        Optional<AppUser> user = userRepository.findById(userId);
         if(user.isPresent()){
             return user.get();
         }

@@ -49,7 +49,7 @@ public class ImageUtils {
     }
 
     // We are going to build our images and store them in a set of images.
-    public static Set<Image> uploadImage(MultipartFile[] multipartFiles) throws IOException {
+    public static Set<Image> uploadImageArr(MultipartFile[] multipartFiles) throws IOException {
         Set<Image> imageModels = new HashSet<>();
         // building Objects of our Image-model to save in Set {}.
         for (MultipartFile file : multipartFiles) {
@@ -62,4 +62,5 @@ public class ImageUtils {
         }
         return imageModels;
     }
+
 }
