@@ -1,20 +1,15 @@
 package com.blueitapp.blueit.services;
 
-import com.blueitapp.blueit.DTO.CommunityDTO;
 import com.blueitapp.blueit.DTO.PostDTO;
 import com.blueitapp.blueit.models.*;
 import com.blueitapp.blueit.repositories.CommunityRepository;
 import com.blueitapp.blueit.repositories.PostRepository;
-import com.blueitapp.blueit.repositories.PostVotesReporitory;
+import com.blueitapp.blueit.repositories.VoteRepository;
 import com.blueitapp.blueit.repositories.UserRepository;
 import com.blueitapp.blueit.utils.ImageUtils;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.text.html.Option;
-import java.io.IOException;
-import java.sql.Date;
 import java.util.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,12 +20,12 @@ public class PostService {
     private final UserRepository userRepository;
     private final CommunityRepository communityRepository;
 //    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-    private final PostVotesReporitory postVotesRepository;
-    public PostService( PostRepository repository, UserRepository userRepository, CommunityRepository communityRepository, PostVotesReporitory postVotesRepository) {
+    private final VoteRepository postVoteRepository;
+    public PostService( PostRepository repository, UserRepository userRepository, CommunityRepository communityRepository, VoteRepository postVoteRepository) {
         this.postRepository = repository;
         this.userRepository = userRepository;
         this.communityRepository = communityRepository;
-        this.postVotesRepository = postVotesRepository;
+        this.postVoteRepository = postVoteRepository;
     }
 
     //CREATE
@@ -84,14 +79,14 @@ public class PostService {
         if(postOptional.isEmpty()){
             throw new Exception("Post not found");
         }
-        Optional<PostVotes> postVotesOptional = postVotesRepository.findByUserIdAndPostId(userOptional.get(), postOptional.get());
+        Optional<Votes> postVotesOptional = postVoteRepository.findByUserIdAndPostId(userOptional.get(), postOptional.get());
         if (postVotesOptional.isPresent()){
             updateVote(postVotesOptional.get(), voteType);
             return;
         }
 
         //Creating new vote
-        PostVotes newVote = new PostVotes();
+        Votes newVote = new Votes();
         newVote.setUserId(userOptional.get());
         newVote.setPostId(postOptional.get());
         newVote.setVoteType(voteType);
@@ -107,7 +102,7 @@ public class PostService {
             newVote.setVoteType("false");
         }
 
-        postVotesRepository.save(newVote);
+        postVoteRepository.save(newVote);
     }
 
     //READ
@@ -149,16 +144,16 @@ public class PostService {
 //    }
 
     //UPDATE
-    public void updateVote(PostVotes postVotes, String voteType) throws Exception {
-        System.out.println("Updating vote" + "" + postVotes.getPostId());
-        Optional<Post> postOptional = postRepository.findById(postVotes.getPostId().getId());
+    public void updateVote(Votes votes, String voteType) throws Exception {
+        System.out.println("Updating vote" + "" + votes.getPostId());
+        Optional<Post> postOptional = postRepository.findById(votes.getPostId().getId());
         if(postOptional.isEmpty()){
             throw new Exception("Post not found. Something went wrong updating.");
         }
-        if (postVotes.getVoteType().equals(voteType)){
+        if (votes.getVoteType().equals(voteType)){
             return;
         }
-        if (postVotes.getVoteType().equals("true") && voteType.equals("false")){
+        if (votes.getVoteType().equals("true") && voteType.equals("false")){
             postOptional.get().setVotes(postOptional.get().getVotes() - 1);
             postRepository.save(postOptional.get());
 
@@ -167,8 +162,8 @@ public class PostService {
             postRepository.save(postOptional.get());
         }
 
-        postVotes.setVoteType(voteType);
-        postVotesRepository.save(postVotes);
+        votes.setVoteType(voteType);
+        postVoteRepository.save(votes);
         }
 
     }

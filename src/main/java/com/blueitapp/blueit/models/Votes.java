@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "post_votes")
-public class PostVotes {
+public class Votes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vote_id")
@@ -29,6 +29,10 @@ public class PostVotes {
     @ManyToOne(optional = true)
     @JoinColumn(name = "post_id", referencedColumnName = "post_id")
     private Post postId;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "comment_id", referencedColumnName = "comment_id")
+    private Comment commentId;
 
 }
 

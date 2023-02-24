@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Date;
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -44,6 +41,10 @@ public class Post {
 
     @JsonIgnore
     @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PostVotes> likes;
+    private Set<Votes> likes;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Comment> comments;
 
 }

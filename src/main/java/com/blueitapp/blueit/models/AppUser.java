@@ -33,7 +33,11 @@ public class AppUser {
     private List<Post> post;
     @JsonIgnore
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostVotes> likes;
+    private List<Votes> likes;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
 
     public AppUser(UUID id, String username, String password, String email, String imageName, String imgType, byte[] profilePicture, List<Post> post) {
@@ -105,11 +109,11 @@ public class AppUser {
         this.imgType = imgType;
     }
 
-    public List<PostVotes> getLikes() {
+    public List<Votes> getLikes() {
         return likes;
     }
 
-    public void setLikes(List<PostVotes> likes) {
+    public void setLikes(List<Votes> likes) {
         this.likes = likes;
     }
 
