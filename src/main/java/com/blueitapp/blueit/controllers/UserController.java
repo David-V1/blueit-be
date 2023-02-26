@@ -69,6 +69,16 @@ public class UserController {
         }
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/u/email/{email}")
+    public AppUser getUserByEmail(@PathVariable String email){
+        try {
+            return service.getUserByEmail(email);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
     // Update
 
 
