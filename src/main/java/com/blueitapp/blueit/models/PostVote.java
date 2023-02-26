@@ -13,26 +13,23 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "post_votes")
-public class Votes {
+@Table(name = "Post_Votes")
+public class PostVote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vote_id")
     private Long id;
     @Column(name = "date_voted")
     private LocalDateTime dateVoted;
-    @Column(name = "vote_type") // true = upvote, false = downvote
-    private String voteType;
-    @ManyToOne(optional = true)
+    @Column(name = "post_vote") // true = upvote, false = downvote
+    private String postVoteType; //TODO: change to boolean
+    @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private AppUser userId;
     @ManyToOne(optional = true)
     @JoinColumn(name = "post_id", referencedColumnName = "post_id")
     private Post postId;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "comment_id", referencedColumnName = "comment_id")
-    private Comment commentId;
 
 }
 
