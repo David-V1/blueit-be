@@ -1,13 +1,7 @@
 package com.blueitapp.blueit.services;
 
-import com.blueitapp.blueit.models.AppUser;
-import com.blueitapp.blueit.models.Comment;
-import com.blueitapp.blueit.models.Post;
-import com.blueitapp.blueit.repositories.CommentRepository;
-import com.blueitapp.blueit.repositories.PostRepository;
-import com.blueitapp.blueit.repositories.UserRepository;
-import com.blueitapp.blueit.repositories.VoteRepository;
-import org.apache.catalina.User;
+import com.blueitapp.blueit.models.*;
+import com.blueitapp.blueit.repositories.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,13 +17,18 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-    private final VoteRepository voteRepository;
+    private final CommentVoteRepository commentVoteRepository;
 
-    public CommentService(CommentRepository commentRepository, PostRepository postRepository, UserRepository userRepository, VoteRepository commentVoteRepository) {
+    public CommentService(
+            CommentRepository commentRepository,
+            PostRepository postRepository,
+            UserRepository userRepository,
+            CommentVoteRepository commentVoteRepository) {
+
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
-        this.voteRepository = commentVoteRepository;
+        this.commentVoteRepository = commentVoteRepository;
     }
 
     //Create
@@ -54,10 +53,55 @@ public class CommentService {
         Comment comment = new Comment();
 
         comment.setCommentText(commentText.getCommentText());
-        comment.setPostId(post);
-        comment.setUserId(user);
-        comment.setDateCreated(newPostDate);
+        comment.setPost(post);
+        comment.setUser(user);
+        comment.setDate(newPostDate);
         commentRepository.save(comment);
+    }
+
+    public void addVote(UUID userId, Long commentId, String voteType) throws Exception{
+        //1 vote per user per comment
+        Optional<AppUser> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new Exception("User not found");
+        }
+        Optional<Comment> commentOptional = commentRepository.findById(commentId);
+        if (commentOptional.isEmpty()) {
+            throw new Exception("Comment not found");
+        }
+        System.out.println("line 72");
+        Optional<CommentVote> commentVoteOptional = commentVoteRepository.findByUserIdAndComment(userOptional.get(), commentOptional.get());
+        if (commentVoteOptional.isPresent()) {
+            System.out.println("line 75");
+            updateCommentVote(commentVoteOptional.get(), voteType);
+            return;
+        }
+        System.out.println("line 79");
+        // new vote
+        CommentVote commentVote = new CommentVote();
+        commentVote.setComment(commentOptional.get());
+        commentVote.setUserId(userOptional.get());
+        commentVote.setCommentVoteType(voteType);
+        commentVote.setDate(LocalDateTime.now());
+
+        // upVote/downVote
+        Comment comment = commentOptional.get();
+        if (voteType.equals("true")) {
+            if (comment.getLikes() == null) {
+                comment.setLikes(1);
+            } else {
+                comment.setLikes(comment.getLikes() + 1);
+            }
+        } else {
+            if (comment.getLikes() == null) {
+                comment.setLikes(-1);
+            } else {
+                comment.setLikes(comment.getLikes() - 1);
+            }
+        }
+        commentVoteRepository.save(commentVote);
+        System.out.println("line 95 END!");
+
     }
 
     //Read
@@ -82,7 +126,7 @@ public class CommentService {
         List<Comment> comments = new ArrayList<>();
         commentRepository.findAll().forEach(comments::add);
         return comments.stream()
-                .filter(comment -> comment.getUserId().equals(user))
+                .filter(comment -> comment.getUser().equals(user))
                 .collect(Collectors.toList());
     }
 
@@ -96,13 +140,34 @@ public class CommentService {
         List<Comment> comments = new ArrayList<>();
         commentRepository.findAll().forEach(comments::add);
         return comments.stream()
-                .filter(comment -> comment.getPostId().equals(post))
+                .filter(comment -> comment.getPost().equals(post))
                 .collect(Collectors.toList());
 
     }
 
 
     //Update
+    public void updateCommentVote(CommentVote commentVote, String voteType) throws Exception {
+        //relational comment id to update
+        Optional<Comment> commentOptional = commentRepository.findById(commentVote.getComment().getId());
+        if (commentOptional.isEmpty()) {
+            throw new Exception("Comment not found");
+        }
+        Comment comment = commentOptional.get();
+        //check type voted
+        if (commentVote.getCommentVoteType().equals(voteType)) {
+            return;
+        }
+        if (commentVote.getCommentVoteType().equals("true") && voteType.equals("false")) {
+            comment.setLikes(comment.getLikes() - 1);
+            commentRepository.save(comment);
+        } else {
+            comment.setLikes(comment.getLikes() + 1);
+            commentRepository.save(comment);
+        }
+        commentVote.setCommentVoteType(voteType);
+        commentVoteRepository.save(commentVote);
 
+    }
     //Delete
 }

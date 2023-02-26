@@ -41,10 +41,10 @@ public class Post {
 
     @JsonIgnore
     @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Votes> likes;
+    private Set<PostVote> likes;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments;
 
 }

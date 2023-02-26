@@ -27,6 +27,15 @@ public class CommentController {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED);
         }
     }
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/vote/{userId}/{commentId}/{voteType}")
+    public void addVote(@PathVariable UUID userId, @PathVariable Long commentId, @PathVariable String voteType){
+        try {
+            commentService.addVote(userId, commentId, voteType);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED);
+        }
+    }
 
     //Read
     @ResponseStatus(HttpStatus.OK)
