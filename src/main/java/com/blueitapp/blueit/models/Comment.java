@@ -17,7 +17,7 @@ public class Comment {
     @Column(name = "comment_id")
     private Long id;
 
-    @Column(name = "comment_text")
+    @Column(name = "comment_text", length = 10000)
     private String commentText;
 
     @Column(name = "date_created")
