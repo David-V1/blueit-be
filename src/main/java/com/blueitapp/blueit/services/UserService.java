@@ -47,6 +47,7 @@ public class UserService {
 
     //TODO: 1. You can use a hashmap to store the user's UUID and the token then use the token to verify the user's UUID
     //TODO: 2. You can use the repository ID to generate a token and use the token to verify the user's UUID
+
     //Read
     public Iterable<AppUser> getAllUsers(){
         return userRepository.findAll();
@@ -66,6 +67,14 @@ public class UserService {
             return user.get();
         }
         throw new Exception("User not found");
+    }
+
+    public AppUser getUserByEmail(String email) throws Exception{
+        Optional<AppUser> user = userRepository.findByEmail(email);
+        if(user.isPresent()){
+            return user.get();
+        }
+        throw new Exception("User does not have an account");
     }
 
     //Update

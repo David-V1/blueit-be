@@ -91,12 +91,14 @@ public class CommentService {
                 comment.setLikes(1);
             } else {
                 comment.setLikes(comment.getLikes() + 1);
+                commentVote.setCommentVoteType("true");
             }
         } else {
             if (comment.getLikes() == null) {
-                comment.setLikes(-1);
+                comment.setLikes(0);
             } else {
                 comment.setLikes(comment.getLikes() - 1);
+                commentVote.setCommentVoteType("false");
             }
         }
         commentVoteRepository.save(commentVote);
