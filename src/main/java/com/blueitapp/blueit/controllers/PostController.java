@@ -93,7 +93,7 @@ public class PostController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/userId/{userId}")
+    @GetMapping("/userId/{user}")
     public Iterable<Post> getAllPostByUser(UUID user) {
         System.out.println(user);
         try {

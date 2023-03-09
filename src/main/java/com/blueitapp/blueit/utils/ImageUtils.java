@@ -63,4 +63,13 @@ public class ImageUtils {
         return imageModels;
     }
 
+    public static Image uploadImage(MultipartFile file) throws IOException {
+        Image image = new Image(
+                file.getOriginalFilename(),
+                file.getContentType(),
+                file.getBytes()
+        );
+        return image;
+    }
+
 }

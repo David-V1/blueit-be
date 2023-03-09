@@ -3,12 +3,9 @@ package com.blueitapp.blueit.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -22,7 +19,7 @@ public class Community {
     @Column(name = "name")
     private String name;
     @Column(name = "date")
-    private String postedDate;
+    private String dateCreated;
     @Column(name="description")
     private String description;
     @OneToOne(cascade = CascadeType.ALL)
@@ -43,7 +40,7 @@ public class Community {
     public Community(Long id, String name, String postedDate, String description, Image logo, List<Post> post, List<AppUser> members) {
         this.id = id;
         this.name = name;
-        this.postedDate = postedDate;
+        this.dateCreated = postedDate;
         this.description = description;
         this.logo = logo;
         this.post = post;

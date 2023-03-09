@@ -2,10 +2,15 @@ package com.blueitapp.blueit.services;
 
 import com.blueitapp.blueit.DTO.CommunityDTO;
 import com.blueitapp.blueit.models.Community;
+import com.blueitapp.blueit.models.Image;
 import com.blueitapp.blueit.repositories.CommunityRepository;
 import com.blueitapp.blueit.repositories.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import com.blueitapp.blueit.utils.ImageUtils;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Service
@@ -32,12 +37,44 @@ public class CommunityService {
         if(communityOptional.isPresent()){
             throw new Exception("Community already exists");
         }
+        // Date formatter
+        LocalDateTime newDate = LocalDateTime.now();
+        DateTimeFormatter myDateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String dateCreated = newDate.format(myDateFormat);
 
         Community newCommunity = new Community();
         newCommunity.setName(communityName);
+        newCommunity.setDateCreated(dateCreated);
 
         communityRepository.save(newCommunity);
+    }
 
+    public void addDescription(String description, Long communityId) throws Exception {
+        Optional<Community> communityOptional = communityRepository.findById(communityId);
+        if (communityOptional.isEmpty()){
+            throw new Exception("No community found");
+        }
+
+        description.trim();
+        if (description.equals(""))
+            throw new Exception();
+
+        Community community = communityOptional.get();
+        community.setDescription(description);
+        communityRepository.save(community);
+    }
+
+    //TODO: Need to compress image
+    public void addCommunityLogo(Long communityId, MultipartFile file) throws Exception {
+        Optional<Community> communityOptional = communityRepository.findById(communityId);
+        if (communityOptional.isEmpty()) {
+            throw new Exception("Community not found!");
+        }
+
+        Community community = communityOptional.get();
+        Image image = ImageUtils.uploadImage(file);
+        community.setLogo(image);
+        communityRepository.save(community);
     }
 
     // Read
