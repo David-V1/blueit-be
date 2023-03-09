@@ -2,6 +2,7 @@ package com.blueitapp.blueit.controllers;
 
 import com.blueitapp.blueit.DTO.CommunityDTO;
 import com.blueitapp.blueit.DTO.PostDTO;
+import com.blueitapp.blueit.models.AppUser;
 import com.blueitapp.blueit.models.Image;
 import com.blueitapp.blueit.models.Post;
 import com.blueitapp.blueit.services.PostService;
@@ -86,6 +87,17 @@ public class PostController {
     public Integer getPostLikes(@PathVariable Long postId){
         try {
             return service.getPostLikes(postId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/userId/{userId}")
+    public Iterable<Post> getAllPostByUser(UUID user) {
+        System.out.println(user);
+        try {
+            return service.getAllPostByUserId(user);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

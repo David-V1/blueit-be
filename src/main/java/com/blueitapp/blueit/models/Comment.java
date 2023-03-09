@@ -35,7 +35,7 @@ public class Comment {
     private Post post;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Column(name = "votes")
     private Set<CommentVote> commentVote;
 

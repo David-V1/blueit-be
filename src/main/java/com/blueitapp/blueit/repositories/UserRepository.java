@@ -1,6 +1,7 @@
 package com.blueitapp.blueit.repositories;
 
 import com.blueitapp.blueit.models.AppUser;
+import com.blueitapp.blueit.models.Community;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,4 +15,5 @@ public interface UserRepository extends CrudRepository<AppUser, UUID>{
 
     Optional<AppUser> findByEmail(String email);
     Optional<AppUser> findByEmailAndPassword(String email, String password);
+
 }

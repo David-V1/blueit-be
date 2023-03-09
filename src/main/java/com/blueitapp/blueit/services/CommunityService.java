@@ -1,26 +1,23 @@
 package com.blueitapp.blueit.services;
 
 import com.blueitapp.blueit.DTO.CommunityDTO;
-import com.blueitapp.blueit.models.AppUser;
 import com.blueitapp.blueit.models.Community;
 import com.blueitapp.blueit.repositories.CommunityRepository;
 import com.blueitapp.blueit.repositories.UserRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 
 @Service
 public class CommunityService {
 
     private final CommunityRepository communityRepository;
+    private final UserRepository userRepository;
 
-    public CommunityService(CommunityRepository communityRepository) {
+    public CommunityService(CommunityRepository communityRepository, UserRepository userRepository) {
         this.communityRepository = communityRepository;
 
+        this.userRepository = userRepository;
     }
 
     // Create

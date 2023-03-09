@@ -56,6 +56,7 @@ public class CommentService {
         comment.setPost(post);
         comment.setUser(user);
         comment.setDate(newPostDate);
+        comment.setLikes(0);
         commentRepository.save(comment);
     }
 
@@ -69,14 +70,11 @@ public class CommentService {
         if (commentOptional.isEmpty()) {
             throw new Exception("Comment not found");
         }
-        System.out.println("line 72");
         Optional<CommentVote> commentVoteOptional = commentVoteRepository.findByUserIdAndComment(userOptional.get(), commentOptional.get());
         if (commentVoteOptional.isPresent()) {
-            System.out.println("line 75");
             updateCommentVote(commentVoteOptional.get(), voteType);
             return;
         }
-        System.out.println("line 79");
         // new vote
         CommentVote commentVote = new CommentVote();
         commentVote.setComment(commentOptional.get());
@@ -102,7 +100,6 @@ public class CommentService {
             }
         }
         commentVoteRepository.save(commentVote);
-        System.out.println("line 95 END!");
 
     }
 
@@ -135,7 +132,6 @@ public class CommentService {
     public Iterable<Comment> getAllCommentsByPostId(Long id) {
         Optional<Post> postOptional = postRepository.findById(id);
         if (postOptional.isEmpty()) {
-            System.out.println("Post not found");
             return null;
         }
         Post post = postOptional.get();
@@ -172,4 +168,5 @@ public class CommentService {
 
     }
     //Delete
+    // Foreign key ERROR, might need to delete CommentVote's comment_id first in order to delete a comment.
 }

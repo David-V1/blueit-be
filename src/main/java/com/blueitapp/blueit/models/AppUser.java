@@ -43,6 +43,9 @@ public class AppUser {
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentVote> commentVotes;
 
+    @ManyToMany(mappedBy = "members")
+    private List<Community> communities;
+
     public AppUser(UUID id, String username, String password, String email, String imageName, String imgType, byte[] profilePicture, List<Post> post) {
         this.id = id;
         this.username = username;
@@ -126,5 +129,29 @@ public class AppUser {
 
     public void setImageName(String imageName) {
         this.imageName = imageName;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public List<CommentVote> getCommentVotes() {
+        return commentVotes;
+    }
+
+    public void setCommentVotes(List<CommentVote> commentVotes) {
+        this.commentVotes = commentVotes;
+    }
+
+    public List<Community> getCommunities() {
+        return communities;
+    }
+
+    public void setCommunities(List<Community> communities) {
+        this.communities = communities;
     }
 }

@@ -67,7 +67,6 @@ public class PostService {
         postRepository.save(newPost);
     }
 
-    //TODO: Need to handle down votes as well.
     public void votePost(UUID userId, Long postId, String voteType) throws Exception {
 
         //Ensuring there is 1 vote per user per post
@@ -122,15 +121,22 @@ public class PostService {
         if(post.isPresent()) {
             return post.get();
         }
-        throw new Exception("Post not found");
+        throw new Exception();
     }
 
     public Integer getPostLikes(Long postId) throws Exception{
         Optional<Post> postOptional = postRepository.findById(postId);
         if(postOptional.isEmpty()){
-            throw new Exception("Post not found");
+            throw new Exception();
         }
         return postOptional.get().getVotes();
+    }
+
+    public Iterable<Post> getAllPostByUserId(UUID user) throws Exception {
+        Optional<Post> postOptional = postRepository.findByUser_Id(user);
+        if (postOptional.isEmpty())
+            throw new Exception();
+        return postRepository.findAllByUserId(user);
     }
 
     //UPDATE
