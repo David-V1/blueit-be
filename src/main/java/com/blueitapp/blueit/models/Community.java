@@ -22,7 +22,7 @@ public class Community {
     private String dateCreated;
     @Column(name="description")
     private String description;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval =  true)
     @JoinColumn(name= "image_id",referencedColumnName = "image_id")
     private Image logo;
     @JsonIgnore

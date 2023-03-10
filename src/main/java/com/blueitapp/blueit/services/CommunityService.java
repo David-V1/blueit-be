@@ -65,13 +65,18 @@ public class CommunityService {
     }
 
     //TODO: Need to compress image
+    //TODO: Need to check if there is an image already for the Community, delete if so, add new...
     public void addCommunityLogo(Long communityId, MultipartFile file) throws Exception {
         Optional<Community> communityOptional = communityRepository.findById(communityId);
         if (communityOptional.isEmpty()) {
             throw new Exception("Community not found!");
         }
-
         Community community = communityOptional.get();
+        if (community.getLogo() != null) {
+            community.setLogo(null);
+            communityRepository.save(community);
+        }
+
         Image image = ImageUtils.uploadImage(file);
         community.setLogo(image);
         communityRepository.save(community);
@@ -103,5 +108,7 @@ public class CommunityService {
     // Update
 
     // Delete
+
+
 
 }

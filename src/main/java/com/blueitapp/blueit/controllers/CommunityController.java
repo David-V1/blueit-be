@@ -17,7 +17,7 @@ import java.util.UUID;
 public class CommunityController {
 
     private final CommunityService service;
-    public CommunityController(CommunityService communityService){
+    public CommunityController(CommunityService communityService) {
         this.service = communityService;
     }
 
@@ -55,13 +55,13 @@ public class CommunityController {
     // Read
     @ResponseStatus(HttpStatus.OK)
     @GetMapping()
-    public Iterable<Community> getAllCommunities(){
+    public Iterable<Community> getAllCommunities() {
         return service.getAllCommunities();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/comId/{id}")
-    public Community getCommunityById(@PathVariable Long id){
+    public Community getCommunityById(@PathVariable Long id) {
         try {
             return service.getCommunityById(id);
         } catch (Exception e) {
