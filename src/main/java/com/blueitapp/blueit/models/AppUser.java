@@ -2,8 +2,8 @@ package com.blueitapp.blueit.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -25,6 +25,7 @@ public class AppUser {
     @Column(name = "image_type")
     private String imgType;
     @Lob
+    @Basic(fetch=FetchType.LAZY, optional=true)
     @Column(name = "profile_picture", length = 10000)
     private byte[] profilePicture;
 
@@ -43,10 +44,11 @@ public class AppUser {
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentVote> commentVotes;
 
-    @ManyToMany(mappedBy = "members")
-    private List<Community> communities;
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserCommunity> userCommunities;
 
-    public AppUser(UUID id, String username, String password, String email, String imageName, String imgType, byte[] profilePicture, List<Post> post) {
+    public AppUser(UUID id, String username, String password, String email, String imageName, String imgType, byte[] profilePicture, List<Post> post, List<PostVote> likes, List<Comment> comments, List<CommentVote> commentVotes) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -55,6 +57,10 @@ public class AppUser {
         this.imgType = imgType;
         this.profilePicture = profilePicture;
         this.post = post;
+        this.likes = likes;
+        this.comments = comments;
+        this.commentVotes = commentVotes;
+
     }
 
     public AppUser() { }
@@ -86,11 +92,9 @@ public class AppUser {
     public void setEmail(String email) {
         this.email = email;
     }
-
     public byte[] getProfilePicture() {
         return profilePicture;
     }
-
     public void setProfilePicture(byte[] profilePicture) {
         this.profilePicture = profilePicture;
     }
@@ -147,11 +151,44 @@ public class AppUser {
         this.commentVotes = commentVotes;
     }
 
-    public List<Community> getCommunities() {
-        return communities;
+    public void addPost(Post post) {
+        this.post.add(post);
+        post.setUser(this);
     }
 
-    public void setCommunities(List<Community> communities) {
-        this.communities = communities;
+    public void removePost(Post post) {
+        this.post.remove(post);
+        post.setUser(null);
     }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+        comment.setUser(this);
+    }
+
+    public void removeComment(Comment comment) {
+        this.comments.remove(comment);
+        comment.setUser(null);
+    }
+
+    public void addLike(PostVote postVote) {
+        this.likes.add(postVote);
+        postVote.setUserId(this);
+    }
+
+    public void removeLike(PostVote postVote) {
+        this.likes.remove(postVote);
+        postVote.setUserId(null);
+    }
+
+    public void addCommentVote(CommentVote commentVote) {
+        this.commentVotes.add(commentVote);
+        commentVote.setUserId(this);
+    }
+
+    public void removeCommentVote(CommentVote commentVote) {
+        this.commentVotes.remove(commentVote);
+        commentVote.setUserId(null);
+    }
+
 }

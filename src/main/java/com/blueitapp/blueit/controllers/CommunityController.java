@@ -17,26 +17,26 @@ import java.util.UUID;
 public class CommunityController {
 
     private final CommunityService service;
-    public CommunityController(CommunityService communityService){
+    public CommunityController(CommunityService communityService) {
         this.service = communityService;
     }
 
     // Create
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping()
-    public void createCommunity(@RequestBody CommunityDTO community) {
+    @PostMapping("/admin/{admin}")
+    public void createCommunity(@RequestBody CommunityDTO community, @PathVariable UUID admin) {
         try {
-            service.createCommunity(community);
+            service.createCommunity(community, admin);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED);
         }
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/description/{description}/id/{communityId}")
-    public void addCommunityDescription(@PathVariable String description, @PathVariable Long communityId) {
+    @PostMapping("/description/{communityId}")
+    public void addCommunityDescription(@PathVariable Long communityId, @RequestBody String description) {
         try {
-            service.addDescription(description, communityId);
+            service.addDescription(communityId, description);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED);
         }
@@ -55,13 +55,13 @@ public class CommunityController {
     // Read
     @ResponseStatus(HttpStatus.OK)
     @GetMapping()
-    public Iterable<Community> getAllCommunities(){
+    public Iterable<Community> getAllCommunities() {
         return service.getAllCommunities();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/comId/{id}")
-    public Community getCommunityById(@PathVariable Long id){
+    public Community getCommunityById(@PathVariable Long id) {
         try {
             return service.getCommunityById(id);
         } catch (Exception e) {

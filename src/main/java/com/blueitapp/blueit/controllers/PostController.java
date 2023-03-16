@@ -94,7 +94,7 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/userId/{user}")
-    public Iterable<Post> getAllPostByUser(UUID user) {
+    public Iterable<Post> getAllPostByUser(@PathVariable UUID user) {
         System.out.println(user);
         try {
             return service.getAllPostByUserId(user);

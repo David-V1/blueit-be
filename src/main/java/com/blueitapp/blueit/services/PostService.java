@@ -139,6 +139,25 @@ public class PostService {
         return postRepository.findAllByUserId(user);
     }
 
+    public Iterable<Post> getPostByCommunityId(Long id) throws Exception {
+        Optional<Community> communityOptional = communityRepository.findById(id);
+        if (communityOptional.isEmpty()) {
+            throw new Exception("Community wasn't found");
+        }
+        Community community = communityOptional.get();
+        //TODO: double check what Type findPostByCommunity_Id is returning.
+        List<Post> posts = postRepository.findPostByCommunity_Id(community.getId());
+        return posts;
+        /*
+        // Other potential method to returning all matching post in a community
+        List<Community> communities = new ArrayList<>();
+        communityRepository.findAll().foreach(communities::add);
+        return communities.stream()
+                .filter(community -> community.getCommunity().equals(community))
+                .collect(Collectors.toList());
+         */
+    }
+
     //UPDATE
     public void updateVote(PostVote postVote, String voteType) throws Exception {
         Optional<Post> postOptional = postRepository.findById(postVote.getPostId().getId());
