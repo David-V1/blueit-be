@@ -2,6 +2,7 @@ package com.blueitapp.blueit.services;
 
 import com.blueitapp.blueit.models.AppUser;
 import com.blueitapp.blueit.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +19,7 @@ public class UserService {
     //TODO: Add AUTH to verify user UUID w/ hashMap or get token from repository ID (Extract)
 
     //Create
+
     public void createUser(AppUser user) throws Exception {
         Optional<AppUser> userOptional = userRepository.findByEmail(user.getEmail());
         if(userOptional.isPresent()){
@@ -33,6 +35,7 @@ public class UserService {
         userRepository.save(newUser);
     }
     //TODO: Compress files
+
     public void addProfilePicture(UUID userId, MultipartFile file) throws Exception {
         Optional<AppUser> userOptional = userRepository.findById(userId);
         if(userOptional.isEmpty()) {

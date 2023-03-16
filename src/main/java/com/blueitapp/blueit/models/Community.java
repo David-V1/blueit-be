@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -20,37 +22,32 @@ public class Community {
     private String name;
     @Column(name = "date")
     private String dateCreated;
-    @Column(name="description")
+    @Column(name="description", length = 500)
     private String description;
+
+    @Column(name = "admin")
+    private UUID admin; // initial creator
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval =  true)
     @JoinColumn(name= "image_id",referencedColumnName = "image_id")
     private Image logo;
     @JsonIgnore
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> post;
+    @JsonIgnore
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserCommunity> userCommunity;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_community",
-            joinColumns = @JoinColumn( name = "community_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<AppUser> members;
-
-    public Community(Long id, String name, String postedDate, String description, Image logo, List<Post> post, List<AppUser> members) {
+    public Community(Long id, String name, String dateCreated, String description, UUID admin, Image logo, List<Post> post) {
         this.id = id;
         this.name = name;
-        this.dateCreated = postedDate;
+        this.dateCreated = dateCreated;
         this.description = description;
+        this.admin = admin;
         this.logo = logo;
         this.post = post;
-        this.members = members;
     }
 
-    public Community(String name) {
-        this.name = name;
-        this.post = post;
-    }
+    public Community() {}
 
     public Long getId() {
         return id;
@@ -58,8 +55,6 @@ public class Community {
     public void setId(Long id) {
         this.id = id;
     }
-
-    public Community() {}
 
     public String getName() {
         return name;
@@ -69,6 +64,40 @@ public class Community {
         this.name = name;
     }
 
+    public String getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(String dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public UUID getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(UUID admin) {
+        this.admin = admin;
+    }
+
+    public Image getLogo() {
+        return logo;
+    }
+
+    public void setLogo(Image logo) {
+        this.logo = logo;
+    }
+
+
+
     public List<Post> getPost() {
         return post;
     }
@@ -77,11 +106,5 @@ public class Community {
         this.post = post;
     }
 
-    public List<AppUser> getUsers() {
-        return members;
-    }
 
-    public void setUsers(List<AppUser> users) {
-        this.members = users;
-    }
 }

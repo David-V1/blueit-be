@@ -1,9 +1,12 @@
 package com.blueitapp.blueit.services;
 
 import com.blueitapp.blueit.DTO.CommunityDTO;
+import com.blueitapp.blueit.models.AppUser;
 import com.blueitapp.blueit.models.Community;
 import com.blueitapp.blueit.models.Image;
+import com.blueitapp.blueit.models.UserCommunity;
 import com.blueitapp.blueit.repositories.CommunityRepository;
+import com.blueitapp.blueit.repositories.UserCommunityRepository;
 import com.blueitapp.blueit.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,45 +14,62 @@ import com.blueitapp.blueit.utils.ImageUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CommunityService {
 
     private final CommunityRepository communityRepository;
     private final UserRepository userRepository;
-
-    public CommunityService(CommunityRepository communityRepository, UserRepository userRepository) {
+    private final UserCommunityRepository userCommunityRepository;
+    public CommunityService(CommunityRepository communityRepository, UserRepository userRepository, UserCommunityRepository userCommunityRepository) {
         this.communityRepository = communityRepository;
 
         this.userRepository = userRepository;
+
+        this.userCommunityRepository = userCommunityRepository;
     }
 
     // Create
-    public void createCommunity(CommunityDTO community) throws Exception {
-        String communityName = community.name.trim().toLowerCase().replaceAll("\\s", "");
+    public void createCommunity(CommunityDTO community, UUID admin) throws Exception {
+        Optional<AppUser> userOptional = userRepository.findById(admin);
+        if (userOptional.isEmpty())
+            throw new Exception("Something went wrong assigning admin");
 
-        if (communityName.trim().isEmpty()) {
-            throw new Exception("Community name cannot be empty!");
-        }
+        AppUser user = userOptional.get();
+
+        String communityName = community.name.trim().toLowerCase().replaceAll("\\s", "");
 
         Optional<Community> communityOptional = communityRepository.findByName(communityName);
         if(communityOptional.isPresent()){
             throw new Exception("Community already exists");
         }
+
+        if (communityName.trim().isEmpty()) {
+            throw new Exception("Community name cannot be empty!");
+        }
+
         // Date formatter
         LocalDateTime newDate = LocalDateTime.now();
-        DateTimeFormatter myDateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        DateTimeFormatter myDateFormat = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
         String dateCreated = newDate.format(myDateFormat);
 
         Community newCommunity = new Community();
         newCommunity.setName(communityName);
         newCommunity.setDateCreated(dateCreated);
+        newCommunity.setAdmin(userOptional.get().getId());
+
+        UserCommunity userCommunity = new UserCommunity();
+        userCommunity.setCommunity(newCommunity);
+        userCommunity.setUser(user);
+        userCommunity.setDateJoined(dateCreated);
+
 
         communityRepository.save(newCommunity);
+        userCommunityRepository.save(userCommunity);
     }
 
-    public void addDescription(String description, Long communityId) throws Exception {
+    public void addDescription(Long communityId, String description) throws Exception {
         Optional<Community> communityOptional = communityRepository.findById(communityId);
         if (communityOptional.isEmpty()){
             throw new Exception("No community found");
@@ -57,7 +77,7 @@ public class CommunityService {
 
         description.trim();
         if (description.equals(""))
-            throw new Exception();
+            throw new Exception(" Description empty ");
 
         Community community = communityOptional.get();
         community.setDescription(description);
@@ -104,6 +124,17 @@ public class CommunityService {
 
         return communityOptional.get();
     }
+
+//    public List<AppUser> getUsersInCommunity(Long communityId) {
+//        List<UserCommunity> userCommunities = userCommunityRepository.findByCommunityId(communityId);
+//
+//        List<AppUser> users = new ArrayList<>();
+//        for (UserCommunity userCommunity : userCommunities) {
+//            users.add(userCommunity.getUser());
+//        }
+//
+//        return users;
+//    }
 
     // Update
 
