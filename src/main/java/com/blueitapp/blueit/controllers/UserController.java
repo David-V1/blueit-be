@@ -1,11 +1,11 @@
 package com.blueitapp.blueit.controllers;
 
-import com.blueitapp.blueit.DTO.UserDTO;
+
 import com.blueitapp.blueit.models.AppUser;
 import com.blueitapp.blueit.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;

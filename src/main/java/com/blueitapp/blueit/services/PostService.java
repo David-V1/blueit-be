@@ -145,7 +145,6 @@ public class PostService {
             throw new Exception("Community wasn't found");
         }
         Community community = communityOptional.get();
-        //TODO: double check what Type findPostByCommunity_Id is returning.
         List<Post> posts = postRepository.findPostByCommunity_Id(community.getId());
         return posts;
         /*
