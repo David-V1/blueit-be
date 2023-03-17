@@ -86,6 +86,18 @@ public class UserCommunityService {
 
     }
 
+    public int getNumberOfMembersByCommunityId(Long communityId) throws Exception {
+        Optional<Community> communityOptional = communityRepository.findById(communityId);
+        if (communityOptional.isEmpty())
+            throw new Exception("Community does not exist");
+
+        List<UserCommunity> userCommunities = new ArrayList<>();
+        userCommunityRepository.findAll().forEach(userCommunities::add);
+        return (int) userCommunities.stream()
+                .filter(userCommunity -> userCommunity.getCommunity().getId().equals(communityId))
+                .count();
+    }
+
     // Update
 
     // Delete

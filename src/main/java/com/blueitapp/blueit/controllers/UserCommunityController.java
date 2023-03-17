@@ -57,6 +57,16 @@ public class UserCommunityController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("members/{communityId}")
+    public int getNumOfMembers(@PathVariable Long communityId) {
+        try {
+            return userCommunityService.getNumberOfMembersByCommunityId(communityId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
     // Update
 
     // Delete

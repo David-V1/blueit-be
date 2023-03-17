@@ -12,8 +12,7 @@ import java.util.UUID;
 
 @Repository
 public interface UserCommunityRepository extends JpaRepository<UserCommunity, Long> {
-//    get all communities for a user
-    List<UserCommunity> findByCommunityId(Long communityId);
+
     List<UserCommunity> findByUserId(UUID userId);
 
 
