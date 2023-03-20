@@ -96,8 +96,6 @@ public class Community {
         this.logo = logo;
     }
 
-
-
     public List<Post> getPost() {
         return post;
     }
@@ -106,5 +104,11 @@ public class Community {
         this.post = post;
     }
 
+    public Set<UserCommunity> getUserCommunity() {
+        return userCommunity;
+    }
 
+    public void setUserCommunity(Set<UserCommunity> userCommunity) {
+        this.userCommunity = userCommunity;
+    }
 }
