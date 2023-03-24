@@ -129,10 +129,23 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
-    public Iterable<Comment> getAllCommentsByPostId(Long id) {
+    public int getCommentCountByUserId(UUID userId) throws Exception {
+        Optional<AppUser> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new Exception("User not found");
+        }
+        AppUser user = userOptional.get();
+        List<Comment> comments = new ArrayList<>();
+        commentRepository.findAll().forEach(comments::add);
+        return (int) comments.stream()
+                .filter(comment -> comment.getUser().equals(user))
+                .count();
+    }
+
+    public Iterable<Comment> getAllCommentsByPostId(Long id) throws Exception{
         Optional<Post> postOptional = postRepository.findById(id);
         if (postOptional.isEmpty()) {
-            return null;
+            throw new Exception("Post not found");
         }
         Post post = postOptional.get();
         List<Comment> comments = new ArrayList<>();
@@ -140,7 +153,18 @@ public class CommentService {
         return comments.stream()
                 .filter(comment -> comment.getPost().equals(post))
                 .collect(Collectors.toList());
+    }
 
+    public int getCommentCountByPostId(Long postId) throws Exception {
+        Optional<Post> post = postRepository.findById(postId);
+        if (post.isEmpty()) {
+            throw new Exception("Post not found to count");
+        }
+        List<Comment> comments = new ArrayList<>();
+        commentRepository.findAll().forEach(comments::add);
+        return (int) comments.stream()
+                .filter(comment -> comment.getPost().equals(post.get()))
+                .count();
     }
 
 
@@ -167,6 +191,8 @@ public class CommentService {
         commentVoteRepository.save(commentVote);
 
     }
+
+
     //Delete
     // Foreign key ERROR, might need to delete CommentVote's comment_id first in order to delete a comment.
 }

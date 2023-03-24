@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -98,6 +99,16 @@ public class PostController {
         System.out.println(user);
         try {
             return service.getAllPostByUserId(user);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/community/{communityId}")
+    public List<Post> getAllPostByCommunity(@PathVariable Long communityId) {
+        try {
+            return service.getPostsByCommunityId(communityId);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

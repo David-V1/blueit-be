@@ -74,6 +74,26 @@ public class CommentController {
         }
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/post_comment_count/{postId}")
+    public int getCommentCountByPostId(@PathVariable Long postId) {
+        try {
+            return commentService.getCommentCountByPostId(postId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/user_comment_count/{userId}")
+    public int getCommentCountByUserId(@PathVariable UUID userId) {
+        try {
+            return commentService.getCommentCountByUserId(userId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
 
     //Update
 

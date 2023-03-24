@@ -8,6 +8,7 @@ import com.blueitapp.blueit.models.UserCommunity;
 import com.blueitapp.blueit.repositories.CommunityRepository;
 import com.blueitapp.blueit.repositories.UserCommunityRepository;
 import com.blueitapp.blueit.repositories.UserRepository;
+import com.blueitapp.blueit.utils.DateStampUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.blueitapp.blueit.utils.ImageUtils;
@@ -50,9 +51,7 @@ public class CommunityService {
         }
 
         // Date formatter
-        LocalDateTime newDate = LocalDateTime.now();
-        DateTimeFormatter myDateFormat = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
-        String dateCreated = newDate.format(myDateFormat);
+        String dateCreated = DateStampUtil.setDateTimeStamp();
 
         Community newCommunity = new Community();
         newCommunity.setName(communityName);
@@ -63,7 +62,6 @@ public class CommunityService {
         userCommunity.setCommunity(newCommunity);
         userCommunity.setUser(user);
         userCommunity.setDateJoined(dateCreated);
-
 
         communityRepository.save(newCommunity);
         userCommunityRepository.save(userCommunity);
@@ -124,17 +122,6 @@ public class CommunityService {
 
         return communityOptional.get();
     }
-
-//    public List<AppUser> getUsersInCommunity(Long communityId) {
-//        List<UserCommunity> userCommunities = userCommunityRepository.findByCommunityId(communityId);
-//
-//        List<AppUser> users = new ArrayList<>();
-//        for (UserCommunity userCommunity : userCommunities) {
-//            users.add(userCommunity.getUser());
-//        }
-//
-//        return users;
-//    }
 
     // Update
 

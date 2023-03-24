@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -139,23 +140,18 @@ public class PostService {
         return postRepository.findAllByUserId(user);
     }
 
-    public Iterable<Post> getPostByCommunityId(Long id) throws Exception {
+    public List<Post> getPostsByCommunityId(Long id) throws Exception {
         Optional<Community> communityOptional = communityRepository.findById(id);
         if (communityOptional.isEmpty()) {
             throw new Exception("Community wasn't found");
         }
-        Community community = communityOptional.get();
-        //TODO: double check what Type findPostByCommunity_Id is returning.
-        List<Post> posts = postRepository.findPostByCommunity_Id(community.getId());
-        return posts;
-        /*
-        // Other potential method to returning all matching post in a community
-        List<Community> communities = new ArrayList<>();
-        communityRepository.findAll().foreach(communities::add);
+        Community c = communityOptional.get();
+
+        List<Post> communities = new ArrayList<>();
+        postRepository.findAll().forEach(communities::add);
         return communities.stream()
-                .filter(community -> community.getCommunity().equals(community))
+                .filter(community -> community.getCommunity().getId() == c.getId())
                 .collect(Collectors.toList());
-         */
     }
 
     //UPDATE
