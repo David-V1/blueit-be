@@ -48,7 +48,7 @@ public class UserCommunityService {
         // Check if user is already in community
         Optional<UserCommunity> userCommunityOptional = userCommunityRepository.findByUserIdAndCommunityId(userId, communityId);
         if (userCommunityOptional.isPresent())
-            throw new Exception("User is already in community");
+            return;
 
         // Add user to community
         UserCommunity userCommunity = new UserCommunity();
@@ -97,8 +97,49 @@ public class UserCommunityService {
                 .filter(userCommunity -> userCommunity.getCommunity().getId().equals(communityId))
                 .count();
     }
+    //TODO: TEST True/False return type
+    public boolean isUserInCommunity(UUID userId, Long communityId) throws Exception {
+        Optional<AppUser> userOptional = userRepository.findById(userId);
+        // Check if user exists
+        if (userOptional.isEmpty())
+            throw new Exception("User does not exist");
+        AppUser user = userOptional.get();
+
+        // Check if community exists
+        Optional<Community> communityOptional = communityRepository.findById(communityId);
+        if (communityOptional.isEmpty())
+            throw new Exception("Community does not exist");
+        Community community = communityOptional.get();
+        Optional<UserCommunity> userCommunityOptional = userCommunityRepository.findByUserIdAndCommunityId(userId, communityId);
+        if (userCommunityOptional.isPresent())
+            return true;
+        return false;
+
+    }
 
     // Update
 
     // Delete
+    public void leaveCommunity(UUID userId, Long communityId) throws Exception {
+        Optional<AppUser> userOptional = userRepository.findById(userId);
+        // Check if user exists
+        if (userOptional.isEmpty())
+            throw new Exception("User does not exist");
+        AppUser user = userOptional.get();
+
+        // Check if community exists
+        Optional<Community> communityOptional = communityRepository.findById(communityId);
+        if (communityOptional.isEmpty())
+            throw new Exception("Community does not exist");
+        Community community = communityOptional.get();
+
+        // Check if user is already in community
+        Optional<UserCommunity> userCommunityOptional = userCommunityRepository.findByUserIdAndCommunityId(userId, communityId);
+        if (userCommunityOptional.isEmpty())
+            throw new Exception("User is not in community");
+
+        // Remove user from community
+        UserCommunity userCommunity = userCommunityOptional.get();
+        userCommunityRepository.delete(userCommunity);
+    }
 }

@@ -67,8 +67,26 @@ public class UserCommunityController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("is_member/u/{userId}/b/{communityId}")
+    public boolean isUserInCommunity(@PathVariable UUID userId, @PathVariable Long communityId) {
+        try {
+            return userCommunityService.isUserInCommunity(userId, communityId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
     // Update
 
     // Delete
-
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/leave_community/u/{userId}/b/{communityId}")
+    public void leaveCommunity(@PathVariable UUID userId, @PathVariable Long communityId) {
+        try {
+            userCommunityService.leaveCommunity(userId, communityId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
 }
